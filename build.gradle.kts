@@ -3,6 +3,14 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.5.10"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.sonarqube") version "7.1.0.6387"
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "A-Ahmad-Nizar-Sauki-2306152046_Modul-2-CI-CD-DevOpsFile")
+        property("sonar.organization", "a-ahmad-nizar-sauki-2306152046")
+    }
 }
 
 group = "id.ac.ui.cs.advprog"
