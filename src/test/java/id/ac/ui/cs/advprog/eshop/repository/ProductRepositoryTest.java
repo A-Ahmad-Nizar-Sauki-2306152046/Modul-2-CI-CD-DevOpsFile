@@ -22,6 +22,19 @@ class ProductRepositoryTest {
    }
 
    @Test
+   void testCreateProductWithoutId() {
+      Product product = new Product();
+      product.setProductName("Sampo Cap Kuda");
+      product.setProductQuantity(200);
+
+      Product savedProduct = productRepository.create(product);
+
+      assertNotNull(savedProduct.getProductId());
+      assertEquals("Sampo Cap Kuda", savedProduct.getProductName());
+      assertEquals(200, savedProduct.getProductQuantity());
+   }
+
+   @Test
    void testCreateAndFind() {
       Product product = new Product();
       product.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
@@ -93,12 +106,19 @@ class ProductRepositoryTest {
 
    @Test
    void testEditProduct_NotFound() {
-      Product product = new Product();
-      product.setProductId("id-ghoib");
-      product.setProductName("Barang Invisible");
-      product.setProductQuantity(500);
+      Product productAsli = new Product();
+      productAsli.setProductId("id-asli");
+      productAsli.setProductName("Sampo Asli");
+      productAsli.setProductQuantity(100);
+      productRepository.create(productAsli);
 
-      Product result = productRepository.edit(product);
+      Product productGhoib = new Product();
+      productGhoib.setProductId("id-ghoib");
+      productGhoib.setProductName("Barang Invisible");
+      productGhoib.setProductQuantity(500);
+
+      Product result = productRepository.edit(productGhoib);
+
       assertNull(result);
    }
 
