@@ -17,10 +17,6 @@ class ProductRepositoryTest {
    @InjectMocks
    ProductRepository productRepository;
 
-   @BeforeEach
-   void setUp() {
-   }
-
    @Test
    void testCreateProductWithoutId() {
       Product product = new Product();
