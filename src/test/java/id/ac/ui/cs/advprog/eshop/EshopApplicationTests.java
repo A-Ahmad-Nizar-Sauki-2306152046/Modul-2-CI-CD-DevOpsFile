@@ -8,6 +8,7 @@ class EshopApplicationTests {
 
    @Test
    void contextLoads() {
+      // This method is intentionally empty to check if the Spring application context loads correctly
    }
 
    @Test
