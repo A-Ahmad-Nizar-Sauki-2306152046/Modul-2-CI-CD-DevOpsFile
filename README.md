@@ -6,7 +6,8 @@
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/spring%20boot-%236DB33F.svg?style=for-the-badge&logo=springboot&logoColor=white)
 ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
-![Thymeleaf](https://img.shields.io/badge/Thymeleaf-%23005F0F.svg?style=for-the-badge&logo=Thymeleaf&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
 Created by **Ahmad Nizar Sauki** | **2306152046**
 *Fakultas Ilmu Komputer, Universitas Indonesia*
@@ -15,14 +16,19 @@ Created by **Ahmad Nizar Sauki** | **2306152046**
 </div>
 
 ## 📚 Table of Contents
-1. [Reflection 1: Clean Code & Secure Coding](#reflection-1)
-2. [Reflection 2: Unit Testing & Functional Test Clean Code](#reflection-2)
+* **[Module 1: Coding Standards](#-module-1-coding-standards)**
+  * [Reflection 1: Clean Code & Secure Coding](#reflection-1-clean-code--secure-coding)
+  * [Reflection 2: Unit Testing & Functional Test Clean Code](#reflection-2-unit-testing--functional-test-clean-code)
+* **[Module 2: CI/CD & DevOps](#-module-2-cicd--devops)**
+  * [Reflection: CI/CD Implementation & Code Quality](#reflection-cicd-implementation--code-quality)
 
 ---
 
-## Reflection 1
+## 🚀 Module 1: Coding Standards
 
-### 1. Clean Code Principles
+### Reflection 1: Clean Code & Secure Coding
+
+#### 1. Clean Code Principles
 Dalam pengerjaan tugas ini, saya telah menerapkan beberapa prinsip *Clean Code* untuk menjaga kualitas dan keterbacaan kode:
 
 * **Meaningful Names (Penamaan yang Jelas):**
@@ -53,9 +59,9 @@ Saya menyadari pentingnya *version control* yang rapi dalam pengembangan fitur:
 
 ---
 
-## Reflection 2
+### Reflection 2: Unit Testing & Functional Test Clean Code
 
-### 1. Unit Testing & Code Coverage
+#### 1. Unit Testing & Code Coverage
 Setelah menulis unit test untuk fitur Edit dan Delete, saya merasa lebih percaya diri dalam memastikan keandalan kode saya. Namun, saya juga mempelajari bahwa **100% Code Coverage tidak menjamin kode bebas dari bug atau error**.
 
 Code coverage hanya mengukur persentase baris kode yang dieksekusi selama pengujian, tetapi tidak memverifikasi kebenaran logika di dalamnya.
@@ -81,3 +87,28 @@ Terkait tantangan pembuatan functional test baru untuk memverifikasi jumlah item
   2. Mengubah `CreateProductFunctionalTest` dan class test baru lainnya agar melakukan **extends** terhadap `BaseFunctionalTest`.
 
   Dengan cara ini, duplikasi kode dapat dihilangkan sepenuhnya, dan setup pengujian terpusat di satu tempat.
+
+---
+
+## 🚀 Module 2: CI/CD & DevOps
+
+### Reflection: CI/CD Implementation & Code Quality
+
+#### 1. Code Quality Issues & Fixing Strategy
+Selama mengerjakan *exercise* ini, saya menemukan dan memperbaiki cukup banyak masalah kualitas kode yang dideteksi oleh *tools* analisis statis (*linter*) yang terintegrasi di *pipeline* CI/CD. Beberapa *issue* utama yang saya perbaiki antara lain:
+
+* **Unused Code & Redundant Modifiers:** Saya menemukan banyak potongan kode yang tidak lagi terpakai atau berlebihan, seperti *unused imports*, *empty setUp method* yang tidak terpakai di `ProductRepositoryTest`, serta modifier `public` yang redundant (mengingat JUnit 5 tidak mewajibkan *public modifier* untuk kelas atau method test). Selain itu, terdapat deklarasi `throws java.lang.Exception` pada method yang sebenarnya tidak melempar *exception*.
+  * **Strategi:** Saya menghapus seluruh kode mati dan modifier berlebih tersebut secara manual agar *codebase* menjadi lebih ringkas, bersih, dan mematuhi konvensi Java modern.
+* **Dependency Injection Practice:** Terdapat *code smell* terkait penggunaan *field injection* (biasanya menggunakan anotasi `@Autowired` langsung pada *field*).
+  * **Strategi:** Saya melakukan *refactor* dengan menggantinya menjadi *constructor injection*. Pendekatan ini lebih disarankan karena membuat *dependencies* bersifat *immutable* (bisa dijadikan `final`) dan jauh lebih mudah untuk di-*mock* saat melakukan *unit testing*.
+* **Testing Code Quality:** Beberapa *test suite* memiliki kelemahan fungsionalitas dan desain, seperti ketiadaan *assertions* (*missing assertions*), *base test class* yang tidak dilabeli sebagai abstrak, dan method `contextLoads` yang kosong tanpa penjelasan.
+  * **Strategi:** Saya memperkuat *test* dengan menambahkan *assertion* yang tepat untuk memastikan fungsionalitas benar-benar teruji. Saya juga mengubah kelas dasar pengujian menjadi `abstract` agar tidak bisa diinisiasi secara langsung, serta menambahkan komentar penjelas (*explanatory comment*) pada method `contextLoads` yang sengaja dibiarkan kosong agar linter memahaminya sebagai *behavior* yang disengaja.
+* **Security & Configuration Maintainability:** Terdapat peringatan terkait keamanan pada GitHub Actions dan struktur konfigurasi (*build file*).
+  * **Strategi:** Saya menerapkan prinsip *least privilege* dengan membatasi *permissions* GitHub Actions (pada alur kerja Scorecard) menjadi hanya `contents:read`. Selain itu, saya juga merapikan dependensi dengan mengelompokkannya berdasarkan tipe konfigurasi agar lebih mudah di-*maintain* (*better maintainability*).
+
+#### 2. CI/CD Implementation Evaluation
+Berdasarkan pengerjaan *tutorial* dan *exercise* ini, saya yakin bahwa implementasi saat ini sudah sepenuhnya memenuhi definisi *Continuous Integration* (CI) dan *Continuous Deployment* (CD).
+
+Dari sisi **Continuous Integration**, setiap kali ada proses *push* atau *Pull Request* yang mengarah ke *branch* utama di GitHub, GitHub Actions akan secara otomatis menjalankan proses *build*, mengeksekusi seluruh *test suite* (unit & functional), dan menganalisis kualitas kode. Hal ini memastikan bahwa kode baru terintegrasi dengan mulus tanpa merusak fungsionalitas yang sudah ada.
+
+Dari sisi **Continuous Deployment**, *pipeline* telah terhubung langsung dengan *Platform as a Service* (Koyeb) berbasis Docker yang merespons perubahan secara *real-time*. Begitu seluruh proses CI dinyatakan lulus (*passed*), sistem akan otomatis menarik (*pull*) versi rilis terbaru dan melakukan *deployment* ke *server public* tanpa memerlukan perintah manual atau intervensi langsung dari *developer*.
