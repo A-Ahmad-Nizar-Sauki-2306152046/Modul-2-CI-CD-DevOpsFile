@@ -17,7 +17,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 class CreateProductFunctionalTest extends BaseFunctionalTest {
 
    @Test
-   void testCreateProduct_isCorrect(ChromeDriver driver) throws Exception {
+   void testCreateProduct_isCorrect(ChromeDriver driver) {
       driver.get(baseUrl + "/product/create");
 
       WebElement nameInput = driver.findElement(By.name("productName"));
