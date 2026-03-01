@@ -118,7 +118,9 @@ Dari sisi **Continuous Deployment**, *pipeline* telah terhubung langsung dengan 
 ### Reflection: SOLID Principles
 
 #### 1. Single Responsibility Principle (SRP)
-kode saya belum mematuhi SRP karena class `CarController` ditulis dan digabungkan di dalam file `ProductController.java`. Hal ini membuat file tersebut memikul dua tanggung jawab sekaligus: mengelola *HTTP request* untuk entitas `Product` dan juga entitas `Car`.
+saya telah mengimplementasikan SRP setelah memodifikasi kode awal.
+SRP menyatakan bahwa sebuah *class* harus memiliki satu dan hanya satu alasan untuk berubah, yang berarti *class* tersebut hanya boleh mengenkapsulasi satu aspek fungsionalitas atau satu tanggung jawab saja.
+kode saya sebelumnya belum mematuhi SRP karena class `CarController` ditulis dan digabungkan di dalam file `ProductController.java`. Hal ini membuat file tersebut memikul dua tanggung jawab sekaligus: mengelola *HTTP request* untuk entitas `Product` dan juga entitas `Car`.
 
 Untuk menerapkan SRP, **saya telah merubah kode saya** dengan memisahkan `CarController` ke dalam filenya sendiri (`CarController.java`).
 * Sekarang, `ProductController.java` murni hanya menangani fungsionalitas dan alur *routing* untuk produk.
