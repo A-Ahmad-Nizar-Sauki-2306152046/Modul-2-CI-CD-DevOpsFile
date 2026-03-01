@@ -177,3 +177,21 @@ Sekarang kodenya menjadi:
 `@Autowired private CarService carservice;`
 
 Dengan ini, `CarController` hanya bergantung pada kontrak abstraksi dari `CarService`, bukan pada detail implementasinya. Hal ini membuat *controller* menjadi terlepas (*decoupled*) dari logika spesifik, sehingga jika di masa depan ada implementasi service baru, *controller* tidak perlu diubah.
+
+---
+
+### Advantages of Applying SOLID Principles
+Menerapkan prinsip S.O.L.I.D memberikan kenyamanan dan keuntungan krusial pada project, terutama dalam hal pemeliharaan (*maintainability*), skalabilitas, dan kemudahan pengujian (*testability*).
+
+* **Pemeliharaan Kode yang Terisolasi (Maintainability):** Dengan **SRP**, setiap modul memiliki satu fokus tanggung jawab. Sebagai contoh, dengan memisahkan `CarController` dan `ProductController`, jika ada *bug* atau penambahan fitur khusus untuk entitas car, saya hanya perlu meng-update `CarController.java`. Saya tidak perlu takut perubahan tersebut akan merusak sistem *routing* untuk product.
+* **Fleksibilitas Menghadapi Perubahan Kebutuhan (Flexibility):** Dengan menerapkan **OCP** pada `CarRepository` (mengganti objek secara langsung di dalam list, bukan mengupdate atribut satu per satu), proyek menjadi sangat dinamis. Jika di masa depan model `Car` bertambah panjang dengan atribut baru (seperti harga, jenis mesin, atau plat nomor), saya tidak perlu membuka dan mengubah logika *setter* di *repository* lagi. Bahkan ini sesuai dengan prinsip DRY(Don't Repeat Yourself).
+* **Pengujian yang Jauh Lebih Mudah (Testability):** Penerapan **DIP** memaksa modul tingkat tinggi (*Controller*) bergantung pada *Interface* (*Service*). Contoh nyatanya, saat melakukan *Unit Testing* pada `CarController`, saya bisa dengan mudah menyuntikkan (*inject*) *mock* object dari `CarService` tanpa perlu memusingkan kompleksitas implementasi asli dari `CarServiceImpl` ataupun konfigurasi eksternal lainnya.
+
+---
+
+### Disadvantages of Not Applying SOLID Principles
+Mengabaikan prinsip S.O.L.I.D akan menghasilkan utang teknis(*technical debt*) yang membuat *codebase* menjadi kaku(*rigid*), rapuh(*fragile*), dan mempersulit kolaborasi *developer*.
+
+* **Kode Rentan Bug Akibat Efek Samping (Fragile):** Ini terjadi sebelum saya menerapkan **LSP**. Saat `CarController` secara paksa mewarisi `ProductController`, method turunan seperti `productListPage` secara otomatis mendapatkan *base path* dari class anak (`/car`). Akibatnya, *endpoint* untuk menampilkan produk malah tertimpa, menyebabkan perilaku sistem (URL *routing*) menjadi tidak konsisten.
+* **Ketergantungan Kuat yang Menyulitkan Perubahan (High Coupling):** Sebelum menerapkan **DIP**, `CarController` bergantung langsung pada `CarServiceImpl`. Jika suatu saat implementasi bisnis berubah drastis (misalnya peralihan dari arsitektur *monolith* menjadi pemanggilan API *microservice* eksternal), saya tidak hanya mengubah *Service*, tetapi terpaksa harus memodifikasi kode *Controller* juga. Perubahan sekecil apa pun akan memberikan efek ke lapisan-lapisan lainnya.
+* **Terjadinya Kode yang membengkak(Spaghetti Code):** Tanpa mematuhi **SRP**, file seperti `ProductController.java` akan menjadi "tong sampah" untuk menampung seluruh *request handling* di aplikasi. Jika proyek ini terus diperbesar menjadi *e-commerce* utuh (dengan entitas *User*, *Cart*, dll.), file tersebut akan memiliki ribuan baris kode yang sangat sulit dinavigasi dan memperbesar kemungkinan terjadinya *merge conflict* ketika dikerjakan secara berkelompok.
