@@ -16,15 +16,22 @@ Created by **Ahmad Nizar Sauki** | **2306152046**
 </div>
 
 ## 📚 Table of Contents
-* **[Module 1: Coding Standards](#-module-1-coding-standards)**
+* **[Module 1: Coding Standards](#module-1-coding-standards)**
   * [Reflection 1: Clean Code & Secure Coding](#reflection-1-clean-code--secure-coding)
   * [Reflection 2: Unit Testing & Functional Test Clean Code](#reflection-2-unit-testing--functional-test-clean-code)
-* **[Module 2: CI/CD & DevOps](#-module-2-cicd--devops)**
+* **[Module 2: CI/CD & DevOps](#module-2-cicd--devops)**
   * [Reflection: CI/CD Implementation & Code Quality](#reflection-cicd-implementation--code-quality)
+* **[Module 3: Maintainability & OO Principles](#module-3-maintainability--oo-principles)**
+  * [Reflection: SOLID Principles](#reflection-solid-principles)
+    * [1. Single Responsibility Principle (SRP)](#1-single-responsibility-principle-srp)
+    * [2. Open-Closed Principle (OCP)](#2-open-closed-principle-ocp)
+    * [3. Liskov Substitution Principle (LSP)](#3-liskov-substitution-principle-lsp)
+    * [4. Interface Segregation Principle (ISP)](#4-interface-segregation-principle-isp)
+    * [5. Dependency Inversion Principle (DIP)](#5-dependency-inversion-principle-dip)
 
 ---
 
-## 🚀 Module 1: Coding Standards
+## Module 1: Coding Standards
 
 ### Reflection 1: Clean Code & Secure Coding
 
@@ -90,7 +97,7 @@ Terkait tantangan pembuatan functional test baru untuk memverifikasi jumlah item
 
 ---
 
-## 🚀 Module 2: CI/CD & DevOps
+## Module 2: CI/CD & DevOps
 
 ### Reflection: CI/CD Implementation & Code Quality
 
@@ -112,3 +119,61 @@ Berdasarkan pengerjaan *tutorial* dan *exercise* ini, saya yakin bahwa implement
 Dari sisi **Continuous Integration**, setiap kali ada proses *push* atau *Pull Request* yang mengarah ke *branch* utama di GitHub, GitHub Actions akan secara otomatis menjalankan proses *build*, mengeksekusi seluruh *test suite* (unit & functional), dan menganalisis kualitas kode. Hal ini memastikan bahwa kode baru terintegrasi dengan mulus tanpa merusak fungsionalitas yang sudah ada.
 
 Dari sisi **Continuous Deployment**, *pipeline* telah terhubung langsung dengan *Platform as a Service* (Koyeb) berbasis Docker yang merespons perubahan secara *real-time*. Begitu seluruh proses CI dinyatakan lulus (*passed*), sistem akan otomatis menarik (*pull*) versi rilis terbaru dan melakukan *deployment* ke *server public* tanpa memerlukan perintah manual atau intervensi langsung dari *developer*.
+
+## Module 3: Maintainability & OO Principles
+
+### Reflection: SOLID Principles
+
+#### 1. Single Responsibility Principle (SRP)
+saya telah mengimplementasikan SRP setelah memodifikasi kode awal.
+SRP menyatakan bahwa sebuah *class* harus memiliki satu dan hanya satu alasan untuk berubah, yang berarti *class* tersebut hanya boleh mengenkapsulasi satu aspek fungsionalitas atau satu tanggung jawab saja.
+kode saya sebelumnya belum mematuhi SRP karena class `CarController` ditulis dan digabungkan di dalam file `ProductController.java`. Hal ini membuat file tersebut memikul dua tanggung jawab sekaligus: mengelola *HTTP request* untuk entitas `Product` dan juga entitas `Car`.
+
+Untuk menerapkan SRP, **saya telah merubah kode saya** dengan memisahkan `CarController` ke dalam filenya sendiri (`CarController.java`).
+* Sekarang, `ProductController.java` murni hanya menangani fungsionalitas dan alur *routing* untuk produk.
+* `CarController.java` berdiri sendiri dan secara eksklusif hanya fokus menangani fungsionalitas mobil.
+
+Dengan pemisahan ini, masing-masing *controller* kini hanya memiliki satu alasan untuk berubah.
+
+#### 2. Open-Closed Principle (OCP)
+
+saya telah memodifikasi kode agar mematuhi OCP, khususnya pada package repository.
+
+OCP menyatakan bahwa entitas *software* harus terbuka untuk perluasan (*open for extension*) tetapi tertutup untuk modifikasi (*closed for modification*).
+
+Sebelumnya, method `update` pada `CarRepository` saya melanggar OCP karena melakukan *update* atribut secara manual satu per satu (`car.setCarName(...)`, `car.setCarColor(...)`, dst.). Jika ada penambahan atribut baru pada model `Car` (misalnya `price`), saya harus memodifikasi *source code* `CarRepository`.
+
+Saya telah memodifikasi method tersebut agar langsung mengganti objek `Car` lama dengan objek `updatedCar` di dalam *list* (`carData.set(i, updatedCar)`). Dengan ini, jika entitas `Car` diperluas dengan atribut baru, kode di `CarRepository` tidak perlu dimodifikasi sama sekali.
+
+#### 3. Liskov Substitution Principle (LSP)
+
+saya telah mengimplementasikan LSP setelah memodifikasi kode awal.
+
+LSP sendiri menyatakan bahwa objek dari sebuah *superclass* harus dapat digantikan oleh objek dari *subclass*-nya tanpa memengaruhi kebenaran (*correctness*) program. Subclass harus bisa menggantikan kelas dasarnya tanpa mengubah properti program yang diinginkan, seperti konsistensi functional.
+
+Sebelumnya, kode saya belum mematuhi LSP karena `CarController` melakukan *extends* terhadap `ProductController`. Ini adalah pendekatan yang keliru karena `CarController` bukanlah substitusi yang valid untuk `ProductController`. Jika kita menggantikan `ProductController` dengan `CarController`, maka method yang diwariskan (seperti `productListPage`) akan terpengaruh oleh `@RequestMapping("/car")` milik `CarController`. Akibatnya, *endpoint* untuk produk akan berubah menjadi `/car/list` yang jelas merusak konsistensi dan logika *routing*.
+
+Untuk menyesuaikan kode dengan LSP, **saya memodifikasi kode dengan menghapus `extends ProductController` pada `CarController`**. Saya juga menghapus pemanggilan `super(service)` di *constructor*. Sekarang, `CarController` berdiri sendiri secara independen tanpa mewarisi *behavior* yang tidak relevan, sehingga kebenaran dan konsistensi program tetap terjaga.
+
+#### 4. Interface Segregation Principle (ISP)
+
+struktur kode sudah menerapkan ISP sejak awal dan tidak memerlukan modifikasi lebih lanjut.
+
+ISP menyatakan bahwa klien tidak boleh dipaksa untuk bergantung pada *interface* yang tidak mereka gunakan. Oleh karena itu, *interface* yang besar harus dipecah menjadi lebih kecil dan spesifik agar klien hanya perlu mengetahui metode yang benar-benar relevan bagi mereka.
+
+Pada proyek ini, kode dari tutorial sudah mengimplementasikan ISP dengan memisahkan *interface* untuk layanan product dan car, yaitu `ProductService` dan `CarService`. Daripada menggabungkan keduanya ke dalam satu *interface* besar (misalnya `EshopService`) yang akan memaksa kelas implementasi dan *controller* untuk mengetahui metode yang tidak relevan, lebih baik memang membaginya sesuai domain masing-masing. `CarController` hanya bergantung pada metode-metode yang spesifik untuk entitas mobil.
+
+#### 5. Dependency Inversion Principle (DIP)
+
+saya telah mengimplementasikan DIP.
+
+Prinsip DIP menyatakan bahwa modul tingkat tinggi (*high-level modules*) tidak boleh bergantung pada modul tingkat rendah (*low-level modules*). Keduanya harus bergantung pada abstraksi (*abstractions*). Selain itu, abstraksi tidak boleh bergantung pada detail, melainkan detail yang harus bergantung pada abstraksi.
+
+Sebelumnya, kode saya melanggar prinsip ini karena `CarController` (modul tingkat tinggi) bergantung langsung pada kelas implementasi konkret `CarServiceImpl` (modul tingkat rendah) melalui deklarasi variabel:
+`@Autowired private CarServiceImpl carservice;`
+
+Untuk menerapkan DIP, **saya memodifikasi kode dengan mengubah tipe dependensinya menjadi *interface***.
+Sekarang kodenya menjadi:
+`@Autowired private CarService carservice;`
+
+Dengan ini, `CarController` hanya bergantung pada kontrak abstraksi dari `CarService`, bukan pada detail implementasinya. Hal ini membuat *controller* menjadi terlepas (*decoupled*) dari logika spesifik, sehingga jika di masa depan ada implementasi service baru, *controller* tidak perlu diubah.
