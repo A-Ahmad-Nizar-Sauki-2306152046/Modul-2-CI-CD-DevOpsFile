@@ -16,11 +16,18 @@ Created by **Ahmad Nizar Sauki** | **2306152046**
 </div>
 
 ## 📚 Table of Contents
-* **[Module 1: Coding Standards](#-module-1-coding-standards)**
+* **[Module 1: Coding Standards](#module-1-coding-standards)**
   * [Reflection 1: Clean Code & Secure Coding](#reflection-1-clean-code--secure-coding)
   * [Reflection 2: Unit Testing & Functional Test Clean Code](#reflection-2-unit-testing--functional-test-clean-code)
-* **[Module 2: CI/CD & DevOps](#-module-2-cicd--devops)**
+* **[Module 2: CI/CD & DevOps](#module-2-cicd--devops)**
   * [Reflection: CI/CD Implementation & Code Quality](#reflection-cicd-implementation--code-quality)
+* **[Module 3: Maintainability & OO Principles](#module-3-maintainability--oo-principles)**
+  * [Reflection: SOLID Principles](#reflection-solid-principles)
+    * [1. Single Responsibility Principle (SRP)](#1-single-responsibility-principle-srp)
+    * [2. Open-Closed Principle (OCP)](#2-open-closed-principle-ocp)
+    * [3. Liskov Substitution Principle (LSP)](#3-liskov-substitution-principle-lsp)
+    * [4. Interface Segregation Principle (ISP)](#4-interface-segregation-principle-isp)
+    * [5. Dependency Inversion Principle (DIP)](#5-dependency-inversion-principle-dip)
 
 ---
 
@@ -147,6 +154,14 @@ LSP sendiri menyatakan bahwa objek dari sebuah *superclass* harus dapat digantik
 Sebelumnya, kode saya belum mematuhi LSP karena `CarController` melakukan *extends* terhadap `ProductController`. Ini adalah pendekatan yang keliru karena `CarController` bukanlah substitusi yang valid untuk `ProductController`. Jika kita menggantikan `ProductController` dengan `CarController`, maka method yang diwariskan (seperti `productListPage`) akan terpengaruh oleh `@RequestMapping("/car")` milik `CarController`. Akibatnya, *endpoint* untuk produk akan berubah menjadi `/car/list` yang jelas merusak konsistensi dan logika *routing*.
 
 Untuk menyesuaikan kode dengan LSP, **saya memodifikasi kode dengan menghapus `extends ProductController` pada `CarController`**. Saya juga menghapus pemanggilan `super(service)` di *constructor*. Sekarang, `CarController` berdiri sendiri secara independen tanpa mewarisi *behavior* yang tidak relevan, sehingga kebenaran dan konsistensi program tetap terjaga.
+
+#### 4. Interface Segregation Principle (ISP)
+
+struktur kode sudah menerapkan ISP sejak awal dan tidak memerlukan modifikasi lebih lanjut.
+
+ISP menyatakan bahwa klien tidak boleh dipaksa untuk bergantung pada *interface* yang tidak mereka gunakan. Oleh karena itu, *interface* yang besar harus dipecah menjadi lebih kecil dan spesifik agar klien hanya perlu mengetahui metode yang benar-benar relevan bagi mereka.
+
+Pada proyek ini, kode dari tutorial sudah mengimplementasikan ISP dengan memisahkan *interface* untuk layanan product dan car, yaitu `ProductService` dan `CarService`. Daripada menggabungkan keduanya ke dalam satu *interface* besar (misalnya `EshopService`) yang akan memaksa kelas implementasi dan *controller* untuk mengetahui metode yang tidak relevan, lebih baik memang membaginya sesuai domain masing-masing. `CarController` hanya bergantung pada metode-metode yang spesifik untuk entitas mobil.
 
 #### 5. Dependency Inversion Principle (DIP)
 
