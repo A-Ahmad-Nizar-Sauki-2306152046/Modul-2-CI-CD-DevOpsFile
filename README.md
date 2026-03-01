@@ -24,7 +24,7 @@ Created by **Ahmad Nizar Sauki** | **2306152046**
 
 ---
 
-## 🚀 Module 1: Coding Standards
+## Module 1: Coding Standards
 
 ### Reflection 1: Clean Code & Secure Coding
 
@@ -90,7 +90,7 @@ Terkait tantangan pembuatan functional test baru untuk memverifikasi jumlah item
 
 ---
 
-## 🚀 Module 2: CI/CD & DevOps
+## Module 2: CI/CD & DevOps
 
 ### Reflection: CI/CD Implementation & Code Quality
 
@@ -112,3 +112,17 @@ Berdasarkan pengerjaan *tutorial* dan *exercise* ini, saya yakin bahwa implement
 Dari sisi **Continuous Integration**, setiap kali ada proses *push* atau *Pull Request* yang mengarah ke *branch* utama di GitHub, GitHub Actions akan secara otomatis menjalankan proses *build*, mengeksekusi seluruh *test suite* (unit & functional), dan menganalisis kualitas kode. Hal ini memastikan bahwa kode baru terintegrasi dengan mulus tanpa merusak fungsionalitas yang sudah ada.
 
 Dari sisi **Continuous Deployment**, *pipeline* telah terhubung langsung dengan *Platform as a Service* (Koyeb) berbasis Docker yang merespons perubahan secara *real-time*. Begitu seluruh proses CI dinyatakan lulus (*passed*), sistem akan otomatis menarik (*pull*) versi rilis terbaru dan melakukan *deployment* ke *server public* tanpa memerlukan perintah manual atau intervensi langsung dari *developer*.
+
+## Module 3: Maintainability & OO Principles
+
+### Reflection: SOLID Principles
+
+#### 1. Single Responsibility Principle (SRP)
+kode saya belum mematuhi SRP karena class `CarController` ditulis dan digabungkan di dalam file `ProductController.java`. Hal ini membuat file tersebut memikul dua tanggung jawab sekaligus: mengelola *HTTP request* untuk entitas `Product` dan juga entitas `Car`.
+
+Untuk menerapkan SRP, **saya telah merubah kode saya** dengan memisahkan `CarController` ke dalam filenya sendiri (`CarController.java`).
+* Sekarang, `ProductController.java` murni hanya menangani fungsionalitas dan alur *routing* untuk produk.
+* `CarController.java` berdiri sendiri dan secara eksklusif hanya fokus menangani fungsionalitas mobil.
+
+Dengan pemisahan ini, masing-masing *controller* kini hanya memiliki satu alasan untuk berubah.
+
