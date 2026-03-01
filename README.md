@@ -128,3 +128,12 @@ Untuk menerapkan SRP, **saya telah merubah kode saya** dengan memisahkan `CarCon
 
 Dengan pemisahan ini, masing-masing *controller* kini hanya memiliki satu alasan untuk berubah.
 
+#### 3. Liskov Substitution Principle (LSP)
+
+saya telah mengimplementasikan LSP setelah memodifikasi kode awal.
+
+LSP sendiri menyatakan bahwa objek dari sebuah *superclass* harus dapat digantikan oleh objek dari *subclass*-nya tanpa memengaruhi kebenaran (*correctness*) program. Subclass harus bisa menggantikan kelas dasarnya tanpa mengubah properti program yang diinginkan, seperti konsistensi functional.
+
+Sebelumnya, kode saya belum mematuhi LSP karena `CarController` melakukan *extends* terhadap `ProductController`. Ini adalah pendekatan yang keliru karena `CarController` bukanlah substitusi yang valid untuk `ProductController`. Jika kita menggantikan `ProductController` dengan `CarController`, maka method yang diwariskan (seperti `productListPage`) akan terpengaruh oleh `@RequestMapping("/car")` milik `CarController`. Akibatnya, *endpoint* untuk produk akan berubah menjadi `/car/list` yang jelas merusak konsistensi dan logika *routing*.
+
+Untuk menyesuaikan kode dengan LSP, **saya memodifikasi kode dengan menghapus `extends ProductController` pada `CarController`**. Saya juga menghapus pemanggilan `super(service)` di *constructor*. Sekarang, `CarController` berdiri sendiri secara independen tanpa mewarisi *behavior* yang tidak relevan, sehingga kebenaran dan konsistensi program tetap terjaga.
