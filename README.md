@@ -137,3 +137,18 @@ LSP sendiri menyatakan bahwa objek dari sebuah *superclass* harus dapat digantik
 Sebelumnya, kode saya belum mematuhi LSP karena `CarController` melakukan *extends* terhadap `ProductController`. Ini adalah pendekatan yang keliru karena `CarController` bukanlah substitusi yang valid untuk `ProductController`. Jika kita menggantikan `ProductController` dengan `CarController`, maka method yang diwariskan (seperti `productListPage`) akan terpengaruh oleh `@RequestMapping("/car")` milik `CarController`. Akibatnya, *endpoint* untuk produk akan berubah menjadi `/car/list` yang jelas merusak konsistensi dan logika *routing*.
 
 Untuk menyesuaikan kode dengan LSP, **saya memodifikasi kode dengan menghapus `extends ProductController` pada `CarController`**. Saya juga menghapus pemanggilan `super(service)` di *constructor*. Sekarang, `CarController` berdiri sendiri secara independen tanpa mewarisi *behavior* yang tidak relevan, sehingga kebenaran dan konsistensi program tetap terjaga.
+
+#### 5. Dependency Inversion Principle (DIP)
+
+saya telah mengimplementasikan DIP.
+
+Prinsip DIP menyatakan bahwa modul tingkat tinggi (*high-level modules*) tidak boleh bergantung pada modul tingkat rendah (*low-level modules*). Keduanya harus bergantung pada abstraksi (*abstractions*). Selain itu, abstraksi tidak boleh bergantung pada detail, melainkan detail yang harus bergantung pada abstraksi.
+
+Sebelumnya, kode saya melanggar prinsip ini karena `CarController` (modul tingkat tinggi) bergantung langsung pada kelas implementasi konkret `CarServiceImpl` (modul tingkat rendah) melalui deklarasi variabel:
+`@Autowired private CarServiceImpl carservice;`
+
+Untuk menerapkan DIP, **saya memodifikasi kode dengan mengubah tipe dependensinya menjadi *interface***.
+Sekarang kodenya menjadi:
+`@Autowired private CarService carservice;`
+
+Dengan ini, `CarController` hanya bergantung pada kontrak abstraksi dari `CarService`, bukan pada detail implementasinya. Hal ini membuat *controller* menjadi terlepas (*decoupled*) dari logika spesifik, sehingga jika di masa depan ada implementasi service baru, *controller* tidak perlu diubah.
