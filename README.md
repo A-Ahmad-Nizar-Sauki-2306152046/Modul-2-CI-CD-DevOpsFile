@@ -128,6 +128,16 @@ Untuk menerapkan SRP, **saya telah merubah kode saya** dengan memisahkan `CarCon
 
 Dengan pemisahan ini, masing-masing *controller* kini hanya memiliki satu alasan untuk berubah.
 
+#### 2. Open-Closed Principle (OCP)
+
+saya telah memodifikasi kode agar mematuhi OCP, khususnya pada package repository.
+
+OCP menyatakan bahwa entitas *software* harus terbuka untuk perluasan (*open for extension*) tetapi tertutup untuk modifikasi (*closed for modification*).
+
+Sebelumnya, method `update` pada `CarRepository` saya melanggar OCP karena melakukan *update* atribut secara manual satu per satu (`car.setCarName(...)`, `car.setCarColor(...)`, dst.). Jika ada penambahan atribut baru pada model `Car` (misalnya `price`), saya harus memodifikasi *source code* `CarRepository`.
+
+Saya telah memodifikasi method tersebut agar langsung mengganti objek `Car` lama dengan objek `updatedCar` di dalam *list* (`carData.set(i, updatedCar)`). Dengan ini, jika entitas `Car` diperluas dengan atribut baru, kode di `CarRepository` tidak perlu dimodifikasi sama sekali.
+
 #### 3. Liskov Substitution Principle (LSP)
 
 saya telah mengimplementasikan LSP setelah memodifikasi kode awal.
