@@ -32,7 +32,7 @@ class PaymentTest {
       Map<String, String> paymentData = new HashMap<>();
       paymentData.put("voucherCode", "ESHOP1234ABC5678");
 
-      Payment payment = new Payment("payment-1", "VOUCHER", paymentData, order);
+      Payment payment = new VoucherPayment("payment-1", paymentData, order);
       assertEquals("SUCCESS", payment.getStatus());
    }
 
@@ -41,7 +41,7 @@ class PaymentTest {
       Map<String, String> paymentData = new HashMap<>();
       paymentData.put("voucherCode", "ESHOP123"); // Kurang dari 16
 
-      Payment payment = new Payment("payment-2", "VOUCHER", paymentData, order);
+      Payment payment = new VoucherPayment("payment-1", paymentData, order);
       assertEquals("REJECTED", payment.getStatus());
    }
 
@@ -50,7 +50,7 @@ class PaymentTest {
       Map<String, String> paymentData = new HashMap<>();
       paymentData.put("voucherCode", "SHOPP1234ABC5678"); // Tidak mulai dengan ESHOP
 
-      Payment payment = new Payment("payment-3", "VOUCHER", paymentData, order);
+      Payment payment = new VoucherPayment("payment-1", paymentData, order);
       assertEquals("REJECTED", payment.getStatus());
    }
 
@@ -60,7 +60,7 @@ class PaymentTest {
       paymentData.put("bankName", "Bank BCA");
       paymentData.put("referenceCode", "REF123456");
 
-      Payment payment = new Payment("payment-4", "BANK", paymentData, order);
+      Payment payment = new BankTransferPayment("payment-4", paymentData, order);
       assertEquals("SUCCESS", payment.getStatus());
    }
 
@@ -70,7 +70,7 @@ class PaymentTest {
       paymentData.put("bankName", "");
       paymentData.put("referenceCode", "REF123456");
 
-      Payment payment = new Payment("payment-5", "BANK", paymentData, order);
+      Payment payment = new BankTransferPayment("payment-4", paymentData, order);
       assertEquals("REJECTED", payment.getStatus());
    }
 }
