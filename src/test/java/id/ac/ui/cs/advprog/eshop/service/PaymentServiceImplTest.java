@@ -1,9 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
-import id.ac.ui.cs.advprog.eshop.model.Order;
-import id.ac.ui.cs.advprog.eshop.model.Payment;
-import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.model.VoucherPayment;
+import id.ac.ui.cs.advprog.eshop.model.*;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,7 +85,7 @@ class PaymentServiceImplTest {
       Payment result = paymentService.setStatus(payment, "REJECTED");
 
       assertEquals("REJECTED", result.getStatus());
-      assertEquals("FAILED", result.getOrder().getStatus()); // Order jadi FAILED
+      assertEquals("FAILED", result.getOrder().getStatus());
       verify(paymentRepository, times(1)).save(any(Payment.class));
    }
 
@@ -118,5 +115,43 @@ class PaymentServiceImplTest {
 
       List<Payment> result = paymentService.getAllPayments();
       assertEquals(1, result.size());
+   }
+
+   @Test
+   void testAddPaymentBank() {
+      Map<String, String> bankData = new HashMap<>();
+      bankData.put("bankName", "Bank BCA");
+      bankData.put("referenceCode", "REF123");
+
+      Payment bankPayment = new BankTransferPayment("payment-2", bankData, order);
+      doReturn(bankPayment).when(paymentRepository).save(any(Payment.class));
+
+      Payment result = paymentService.addPayment(order, "BANK", bankData);
+
+      verify(paymentRepository, times(1)).save(any(Payment.class));
+      assertEquals("BANK", result.getMethod());
+   }
+
+   @Test
+   void testAddPaymentInvalidMethod() {
+      Map<String, String> paymentData = new HashMap<>();
+
+      assertThrows(IllegalArgumentException.class, () -> {
+         paymentService.addPayment(order, "PAYLATER", paymentData);
+      });
+   }
+
+   @Test
+   void testSetStatusOther() {
+      Payment payment = payments.get(0);
+      doReturn(payment).when(paymentRepository).findById(payment.getId());
+      doReturn(payment).when(paymentRepository).save(any(Payment.class));
+
+      Payment result = paymentService.setStatus(payment, "PENDING");
+
+      assertEquals("PENDING", result.getStatus());
+
+      assertEquals("WAITING_PAYMENT", result.getOrder().getStatus());
+      verify(paymentRepository, times(1)).save(any(Payment.class));
    }
 }

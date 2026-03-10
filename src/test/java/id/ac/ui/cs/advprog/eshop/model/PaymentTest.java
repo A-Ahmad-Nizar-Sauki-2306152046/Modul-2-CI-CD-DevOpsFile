@@ -73,4 +73,49 @@ class PaymentTest {
       Payment payment = new BankTransferPayment("payment-4", paymentData, order);
       assertEquals("REJECTED", payment.getStatus());
    }
+
+   @Test
+   void testCreatePaymentBankTransferRejected_NullBankName() {
+      Map<String, String> paymentData = new HashMap<>();
+      paymentData.put("referenceCode", "REF123456");
+
+      Payment payment = new BankTransferPayment("payment-6", paymentData, order);
+      assertEquals("REJECTED", payment.getStatus());
+   }
+
+   @Test
+   void testCreatePaymentBankTransferRejected_NullReferenceCode() {
+      Map<String, String> paymentData = new HashMap<>();
+      paymentData.put("bankName", "Bank BCA");
+
+      Payment payment = new BankTransferPayment("payment-7", paymentData, order);
+      assertEquals("REJECTED", payment.getStatus());
+   }
+
+   @Test
+   void testCreatePaymentBankTransferRejected_EmptyReferenceCode() {
+      Map<String, String> paymentData = new HashMap<>();
+      paymentData.put("bankName", "Bank BCA");
+      paymentData.put("referenceCode", "   ");
+
+      Payment payment = new BankTransferPayment("payment-8", paymentData, order);
+      assertEquals("REJECTED", payment.getStatus());
+   }
+
+   @Test
+   void testCreatePaymentVoucherRejected_NullVoucherCode() {
+      Map<String, String> paymentData = new HashMap<>();
+
+      Payment payment = new VoucherPayment("payment-9", paymentData, order);
+      assertEquals("REJECTED", payment.getStatus());
+   }
+
+   @Test
+   void testCreatePaymentVoucherRejected_Not8Digits() {
+      Map<String, String> paymentData = new HashMap<>();
+      paymentData.put("voucherCode", "ESHOP1234567890A");
+
+      Payment payment = new VoucherPayment("payment-10", paymentData, order);
+      assertEquals("REJECTED", payment.getStatus());
+   }
 }
