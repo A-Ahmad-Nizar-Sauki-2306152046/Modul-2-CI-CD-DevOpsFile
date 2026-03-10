@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Pay Order</title>
+</head>
+<body>
+<h2>Pay Order</h2>
+<p>Order ID: <span th:text="${order.id}"></span></p>
+<p>Status Saat Ini: <span th:text="${order.status}"></span></p>
+
+<form th:action="@{/order/pay/{id}(id=${order.id})}" method="post">
+  <button type="submit">Confirm Payment</button>
+</form>
+
+<br>
+<a th:href="@{/order/history}">Cancel & Back to History</a>
+</body>
+</html>

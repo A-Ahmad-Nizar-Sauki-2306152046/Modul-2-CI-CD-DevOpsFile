@@ -28,6 +28,9 @@ Created by **Ahmad Nizar Sauki** | **2306152046**
     * [3. Liskov Substitution Principle (LSP)](#3-liskov-substitution-principle-lsp)
     * [4. Interface Segregation Principle (ISP)](#4-interface-segregation-principle-isp)
     * [5. Dependency Inversion Principle (DIP)](#5-dependency-inversion-principle-dip)
+* **[Module 4: Test-Driven Development (TDD)](#module-4-test-driven-development-tdd)**
+  * [1. Evaluasi Workflow TDD (Perspektif Percival)](#1-evaluasi-workflow-tdd-perspektif-percival)
+  * [2. Evaluasi Prinsip F.I.R.S.T.](#2-evaluasi-prinsip-first)
 
 ---
 
@@ -195,3 +198,29 @@ Mengabaikan prinsip S.O.L.I.D akan menghasilkan utang teknis(*technical debt*) y
 * **Kode Rentan Bug Akibat Efek Samping (Fragile):** Ini terjadi sebelum saya menerapkan **LSP**. Saat `CarController` secara paksa mewarisi `ProductController`, method turunan seperti `productListPage` secara otomatis mendapatkan *base path* dari class anak (`/car`). Akibatnya, *endpoint* untuk menampilkan produk malah tertimpa, menyebabkan perilaku sistem (URL *routing*) menjadi tidak konsisten.
 * **Ketergantungan Kuat yang Menyulitkan Perubahan (High Coupling):** Sebelum menerapkan **DIP**, `CarController` bergantung langsung pada `CarServiceImpl`. Jika suatu saat implementasi bisnis berubah drastis (misalnya peralihan dari arsitektur *monolith* menjadi pemanggilan API *microservice* eksternal), saya tidak hanya mengubah *Service*, tetapi terpaksa harus memodifikasi kode *Controller* juga. Perubahan sekecil apa pun akan memberikan efek ke lapisan-lapisan lainnya.
 * **Terjadinya Kode yang membengkak(Spaghetti Code):** Tanpa mematuhi **SRP**, file seperti `ProductController.java` akan menjadi "tong sampah" untuk menampung seluruh *request handling* di aplikasi. Jika proyek ini terus diperbesar menjadi *e-commerce* utuh (dengan entitas *User*, *Cart*, dll.), file tersebut akan memiliki ribuan baris kode yang sangat sulit dinavigasi dan memperbesar kemungkinan terjadinya *merge conflict* ketika dikerjakan secara berkelompok.
+
+---
+
+## Module 4: Test-Driven Development (TDD) & Refactoring
+
+### 1. Evaluasi Workflow TDD (Perspektif Percival)
+
+Kalau ngacu ke pertanyaan refleksi Percival (2017) soal tujuan testing, *workflow* Test-Driven Development (TDD) yang diterapin di *exercise* ini kerasa banget manfaatnya dan lumayan ngubah cara saya *ngoding*.
+
+Siklus **[RED]** -> **[GREEN]** -> **[REFACTOR]** yang ketat ini bikin mindset saya berubah. Dari yang awalnya "pokoknya nulis kode biar jalan", sekarang jadi lebih mikirin desain kode yang bener-bener sesuai sama *requirements*.
+
+* **Lebih Paham Kebutuhan (Clarity):** Karena disuruh nulis *test* duluan, saya jadi dipaksa buat bener-bener paham logikanya sebelum nulis kode implementasinya. Contohnya pas bikin test buat model `Order`, saya jadi harus mendefinisikan ekspektasi buat *happy path* (kayak status sukses) dan *unhappy path* (misal pas produknya kosong atau input statusnya *invalid*) dari awal.
+* **Lebih Aman Pas Refactoring (Safety Net):** Manfaat TDD ini paling berasa pas lagi *refactoring*. Waktu saya mau ganti status *string* yang tadinya *hardcoded* berantakan di mana-mana jadi pakai `OrderStatus` *enum* biar lebih aman dan gampang diganti bahasanya, saya bisa ngelakuinnya dengan tenang. Karena udah ada *test suite* yang lengkap, saya bisa langsung ngecek kalau perubahan tipe data ini nggak ngerusak logika bisnis yang sebelumnya udah ada dan dites.
+
+**Hal yang Bisa Ditingkatkan:**
+Walaupun *workflow* ini ngebantu banget, ke depannya saya harus mastiin kalau *test* yang saya bikin bener-bener fokus ke *behavior* (perilaku) kodenya, bukan malah terlalu nempel ke detail implementasinya. Kadang-kadang, *test* bisa terlalu terikat sama struktur internal sebuah *class*, yang ujung-ujungnya malah bikin repot kalau nanti kodenya mau di-*refactor*. *Next time*, saya mau lebih fokus ngetes *public interface* dan hasil *output*-nya aja, dibanding ngetes *state* internal yang *private*.
+
+### 2. Evaluasi Prinsip F.I.R.S.T.
+
+Kalau ngelihat lagi *unit test* yang udah dibuat selama tutorial ini, menurut saya kodingan test-nya udah lumayan memenuhi prinsip **F.I.R.S.T.** buat *clean testing*:
+
+* **F - Fast (Cepat):** *Test*-nya jalan cepet banget. Dari hasil *test* di log, *suite* buat `OrderTest` cuma butuh waktu 64 milidetik, dan `OrderRepositoryTest` cuma butuh 27 milidetik. *Feedback* yang serba instan ini penting banget buat ngedukung ritme nge-TDD yang enak.
+* **I - Independent (Mandiri):** Tiap *test* bener-bener terisolasi dan mandiri. Karena pakai anotasi `@BeforeEach` buat jalanin *method* `setup()`, kondisi awal (kayak *list* `products` atau `orders`) selalu di-*reset* ulang dari nol setiap kali satu buah *test* mau jalan. Jadi, nggak ada cerita *test* yang satu numpang atau kena efek samping dari hasil *test* yang lain.
+* **R - Repeatable (Bisa Diulang):** *Test*-nya bisa dijalanin di *environment* mana aja tanpa butuh koneksi ke luar. Alih-alih pakai *database* beneran, `OrderRepository` cuma pakai `ArrayList` di *memory*, terus pas ngetes `OrderService`, saya memanfaatkan Mockito buat nge-*mock* sifat dari repository-nya (`@Mock` dan pakai `doReturn()`). Ini ngejamin kalau *test* bakal ngasih *output* yang sama aja, entah pas saya jalanin di laptop sendiri atau pas lagi jalan di *pipeline* CI/CD.
+* **S - Self-Validating (Validasi Otomatis):** Kita nggak perlu lagi melototin log manual buat tahu *test*-nya sukses atau gagal. *Test* yang saya tulis secara eksplisit pakai *method assertion* dari JUnit kayak `assertEquals`, `assertTrue`, dan `assertThrows` (buat mastin `IllegalArgumentException` atau `NoSuchElementException` keluar pas dipanggil). Hasil akhirnya udah pasti jelas dalam bentuk *pass/fail boolean*.
+* **T - Timely (Tepat Waktu):** Sesuai *rules* TDD, baris-baris *test* ini ditulis tepat waktu—artinya ditulis duluan sebelum baris kode utamanya (*production code*) diimplementasiin. Berkat nulis *test* duluan inilah, saya jadi lebih kebayang pas lagi nge-desain *skeleton* awal (kayak pas ngebikin struktur `OrderRepository` dan `OrderServiceImpl` awal) sebelum mikirin gimana daleman logikanya bener-bener dibikin.
