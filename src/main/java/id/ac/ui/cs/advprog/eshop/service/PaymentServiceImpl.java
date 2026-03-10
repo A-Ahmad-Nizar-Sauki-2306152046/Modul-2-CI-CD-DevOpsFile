@@ -13,6 +13,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+/*
+Code smell: Di PaymentServiceImpl masih ada banyak string literal seperti "VOUCHER", "BANK", "SUCCESS", dan "REJECTED". 
+Ini bikin kode nya jadi lebih susah utk dirawat krn rawan typo dan aturan bisnis nya jadi tersebar di banyak if-else. 
+Saran refactor: simpan nilai-nilai itu dalam konstanta atau enum, lalu pecah logika pembuatan payment dan update status ke method terpisah supaya kode lebih rapi dan mudah dikembangkan.
+*/
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
